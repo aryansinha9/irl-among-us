@@ -199,6 +199,13 @@ export async function kickPlayer(lobbyId: string, playerId: string) {
     });
 }
 
+export async function triggerIntro(lobbyId: string) {
+    const lobbyRef = doc(db, "lobbies", lobbyId.toUpperCase());
+    await updateDoc(lobbyRef, {
+        showIntro: true
+    });
+}
+
 export async function startGame(lobbyId: string, settings?: Lobby['settings']) {
     const lobbyRef = doc(db, "lobbies", lobbyId.toUpperCase());
     const lobbySnap = await getDoc(lobbyRef);

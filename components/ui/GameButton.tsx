@@ -8,6 +8,7 @@ const gameButtonVariants = cva(
         variants: {
             variant: {
                 primary: "bg-slate-100 text-slate-900 border-slate-300 hover:bg-white shadow-sm",
+                secondary: "bg-blue-600 text-white border-blue-800 hover:bg-blue-500 shadow-sm",
                 danger: "bg-red-600 text-white border-red-800 hover:bg-red-500",
                 warning: "bg-yellow-500 text-slate-900 border-yellow-700 hover:bg-yellow-400",
                 ghost: "bg-transparent border-2 border-slate-700 text-slate-200 hover:bg-slate-800 hover:text-white border-b-2 active:translate-y-[2px]",

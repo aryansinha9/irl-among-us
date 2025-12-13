@@ -46,6 +46,7 @@ export interface Lobby {
   } | null;
   winner?: 'crewmate' | 'imposter' | 'jester';
   winReason?: string;
+  showIntro?: boolean;
 }
 
 export interface Meeting {
