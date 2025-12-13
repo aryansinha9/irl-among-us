@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { GameButton } from "@/components/ui/GameButton";
 import { Input } from "@/components/ui/input";
-import { createLobby, joinLobby, getLobbyPublicInfo, HOST_SKINS, PLAYER_SKINS } from "@/lib/game";
+import { createLobby, joinLobby, getLobbyPublicInfo, HOST_SKINS, PLAYER_SKINS, ALLOWED_HOSTS } from "@/lib/game";
 import { Loader2, ArrowLeft, Check, Lock, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,6 +28,14 @@ export function JoinGameForm() {
     }, [user]);
 
     const handleCreateClick = () => {
+        if (!user) {
+            router.push('/login');
+            return;
+        }
+        if (!user.email || !ALLOWED_HOSTS.includes(user.email)) {
+            return setError("Access Denied: You are not authorized to host.");
+        }
+
         if (!name) return setError("Please enter your name");
         setError("");
         setMode('host-setup');

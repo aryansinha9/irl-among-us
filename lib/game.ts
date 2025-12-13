@@ -42,6 +42,13 @@ export const PLAYER_SKINS = [
     "char_16", "char_17", "char_18", "char_19", "char_21"
 ];
 
+export const ALLOWED_HOSTS = [
+    "aryansinha575@gmail.com",
+    "aryansinha8424@gmail.com",
+    "systemsananta@gmail.com",
+    "antonygaballah@gmail.com"
+];
+
 const CHARACTER_IMAGES = [...HOST_SKINS, ...PLAYER_SKINS].map(id => `/characters/${id}.png`);
 
 // Generate a random 4-letter code

@@ -6,8 +6,8 @@ import { RoleReveal } from "@/components/game/RoleReveal";
 import { GameButton } from "@/components/ui/GameButton";
 import { TaskItem } from "@/components/ui/TaskItem";
 import { Button } from "@/components/ui/button"; // Keep Button for AdminConsole icon button only
-import { reportBody, callEmergency, eliminatePlayer, completeTask } from "@/lib/game";
-import { AlertCircle, Skull, Siren, ShieldAlert, Eye, EyeOff } from "lucide-react";
+import { reportBody, callEmergency, eliminatePlayer, completeTask, triggerSabotage } from "@/lib/game";
+import { AlertCircle, Skull, Siren, ShieldAlert, Eye, EyeOff, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AdminConsole } from "@/components/admin/admin-console";
 import { WinnerView } from "@/components/winner-view";
@@ -123,6 +123,10 @@ export function GameView({ lobby, me }: GameViewProps) {
                 </div>
             </div>
 
+            import {reportBody, callEmergency, eliminatePlayer, completeTask, triggerSabotage} from "@/lib/game";
+
+            // ... inside GameView render, Actions section ...
+
             {/* Actions */}
             <div className="grid grid-cols-2 gap-4 mt-auto">
                 {me.status === 'alive' ? (
@@ -145,6 +149,21 @@ export function GameView({ lobby, me }: GameViewProps) {
                             Emergency
                         </GameButton>
 
+                        {/* Imposter Actions */}
+                        {me.role === 'imposter' && (
+                            <GameButton
+                                variant="action" // Special variant for sabotage? Or just Primary/Ghost?
+                                // Let's use a distinct look. reusing 'secondary' or creating new style.
+                                // Actually, 'action' variant in GameButton was defined but looked specific.
+                                // Let's use a standard look with a Zap icon.
+                                className="col-span-2 h-16 border-yellow-500/50 text-yellow-500 bg-yellow-900/20 hover:bg-yellow-900/40"
+                                onClick={() => triggerSabotage(lobby.id)}
+                            >
+                                <Zap className="w-5 h-5 mr-2" />
+                                SABOTAGE (VISUAL)
+                            </GameButton>
+                        )}
+
                         {me.role !== 'imposter' && (
                             <GameButton
                                 variant="ghost"
@@ -157,6 +176,7 @@ export function GameView({ lobby, me }: GameViewProps) {
                         )}
                     </>
                 ) : (
+                    // ... dead view ...
                     <div className="col-span-2 p-6 bg-red-900/10 border-2 border-red-900/50 rounded-xl text-center flex flex-col items-center gap-2 animate-pulse">
                         <Skull className="w-12 h-12 text-red-600" />
                         <span className="text-red-500 font-black text-2xl uppercase tracking-widest">You are Dead</span>

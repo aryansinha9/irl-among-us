@@ -43,6 +43,7 @@ export interface Lobby {
   meeting: Meeting | null;
   sabotage: {
     lights: boolean; // true = lights on, false = lights off/sabotaged
+    lightsFlash?: boolean; // Visual alert for Admin
   } | null;
   winner?: 'crewmate' | 'imposter' | 'jester';
   winReason?: string;

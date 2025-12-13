@@ -8,70 +8,75 @@ import { motion, AnimatePresence } from "framer-motion";
 import { updateDoc, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { cn } from "@/lib/utils";
-import { resetLobby, skipDiscussion, endMeeting } from "@/lib/game";
-import { FastForward, Gavel } from "lucide-react";
+import { resetLobby, skipDiscussion, endMeeting, resolveSabotage } from "@/lib/game";
+// ...
 
-interface AdminConsoleProps {
-    lobby: Lobby;
-    onClose?: () => void;
-}
+const isFlashing = lobby.sabotage?.lightsFlash;
 
-export function AdminConsole({ lobby, onClose }: AdminConsoleProps) {
-    const players = Object.values(lobby.players);
+const toggleLights = async () => {
+    if (isFlashing) {
+        // Acknowledge the alert
+        await resolveSabotage(lobby.id);
+        return;
+    }
 
-    // Calculate total progress (just count completed tasks vs total tasks)
-    const totalTasks = players.reduce((acc, p) => acc + (p.tasks?.length || 0), 0);
-    const completedTasks = players.reduce((acc, p) => acc + (p.tasks?.filter(t => t.completed).length || 0), 0);
-    const progressPercent = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+    // Basic sabotage impl
+    const newLightState = !(lobby.sabotage?.lights ?? true);
+    const lobbyRef = doc(db, "lobbies", lobby.id);
+    await updateDoc(lobbyRef, {
+        'sabotage.lights': newLightState
+    });
+};
 
-    const handleResetGame = async () => {
-        if (!confirm("RESET GAME? This will return everyone to lobby.")) return;
-        await resetLobby(lobby.id);
-        onClose?.();
-    };
+// ...
 
-    const toggleLights = async () => {
-        // Basic sabotage impl
-        const newLightState = !(lobby.sabotage?.lights ?? true);
-        const lobbyRef = doc(db, "lobbies", lobby.id);
-        await updateDoc(lobbyRef, {
-            'sabotage.lights': newLightState
-        });
-    };
+return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
+        <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className={cn(
+                "w-full max-w-2xl bg-zinc-900 border rounded-xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] transition-colors duration-500",
+                isFlashing ? "border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.5)] animate-pulse" : "border-white/20"
+            )}
+        >
+            <div className={cn(
+                "flex items-center justify-between p-4 border-b bg-zinc-950 transition-colors duration-500",
+                isFlashing ? "border-red-500 bg-red-950/50" : "border-white/10"
+            )}>
+                <div className="flex items-center gap-2 text-red-500 font-bold uppercase tracking-widest">
+                    <ShieldAlert className={cn("w-6 h-6", isFlashing && "animate-bounce")} />
+                    Admin Console {isFlashing && "- SABOTAGE ALERT"}
+                </div>
+                // ...
+            </div>
 
-    const isMeeting = lobby.status === 'meeting' && lobby.meeting;
-    const now = Date.now();
-    // If discussion end time is in the future, we are in discussion.
-    // Otherwise, if we are in meeting status, we are in voting.
-    const isDiscussion = isMeeting && (lobby.meeting!.discussionEndAt > now);
-    const isVoting = isMeeting && !isDiscussion;
+// ... (stats code unchanged) ...
 
-    const handleSkipDiscussion = async () => {
-        await skipDiscussion(lobby.id);
-    };
+            {/* Controls */}
+            <div className="space-y-2">
+                <h3 className="text-xs text-gray-500 uppercase font-mono">Override Controls</h3>
+                <div className="grid grid-cols-2 gap-4">
+                    {/* ... reset button ... */}
 
-    const handleEndVoting = async () => {
-        if (!confirm("FORCE END VOTING? This will proceed with current votes.")) return;
-        if (lobby.meeting) {
-            // We need to pass the lobby object because logic needs players
-            // Actually endMeeting takes lobbyId and lobby object.
-            await endMeeting(lobby.id, lobby);
-        }
-    };
-
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
-            <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                className="w-full max-w-2xl bg-zinc-900 border border-white/20 rounded-xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
-            >
-                <div className="flex items-center justify-between p-4 border-b border-white/10 bg-zinc-950">
-                    <div className="flex items-center gap-2 text-red-500 font-bold uppercase tracking-widest">
-                        <ShieldAlert className="w-6 h-6" />
-                        Admin Console
-                    </div>
+                    <Button
+                        variant="secondary"
+                        onClick={toggleLights}
+                        className={cn("h-16 flex flex-col gap-1 border transition-all duration-300",
+                            isFlashing
+                                ? "bg-red-600 text-white border-red-400 animate-pulse shadow-[0_0_20px_rgba(220,38,38,0.8)] scale-105"
+                                : !(lobby.sabotage?.lights ?? true)
+                                    ? "bg-red-900/50 border-red-500 text-red-500"
+                                    : "bg-yellow-900/20 border-yellow-500/50 text-yellow-500"
+                        )}
+                    >
+                        {isFlashing ? <ShieldAlert className="w-6 h-6 animate-spin" /> : (!(lobby.sabotage?.lights ?? true) ? <PowerOff className="w-5 h-5" /> : <Zap className="w-5 h-5" />)}
+                        <span className={cn("text-xs font-bold", isFlashing && "text-sm")}>
+                            {isFlashing ? "ACKNOWLEDGE ALERT" : (!(lobby.sabotage?.lights ?? true) ? "Fix Lights" : "Sabotage Lights")}
+                        </span>
+                    </Button>
+// ...
                     {onClose && (
                         <Button variant="ghost" size="icon" onClick={onClose}>
                             <X className="w-6 h-6" />
@@ -134,12 +139,18 @@ export function AdminConsole({ lobby, onClose }: AdminConsoleProps) {
                             <Button
                                 variant="secondary"
                                 onClick={toggleLights}
-                                className={cn("h-16 flex flex-col gap-1 border",
-                                    !(lobby.sabotage?.lights ?? true) ? "bg-red-900/50 border-red-500 text-red-500" : "bg-yellow-900/20 border-yellow-500/50 text-yellow-500"
+                                className={cn("h-16 flex flex-col gap-1 border transition-all duration-300",
+                                    isFlashing
+                                        ? "bg-red-600 text-white border-red-400 animate-pulse shadow-[0_0_20px_rgba(220,38,38,0.8)] scale-105"
+                                        : !(lobby.sabotage?.lights ?? true)
+                                            ? "bg-red-900/50 border-red-500 text-red-500"
+                                            : "bg-yellow-900/20 border-yellow-500/50 text-yellow-500"
                                 )}
                             >
-                                {!(lobby.sabotage?.lights ?? true) ? <PowerOff className="w-5 h-5" /> : <Zap className="w-5 h-5" />}
-                                <span className="text-xs">{!(lobby.sabotage?.lights ?? true) ? "Fix Lights" : "Sabotage Lights"}</span>
+                                {isFlashing ? <ShieldAlert className="w-6 h-6 animate-spin" /> : (!(lobby.sabotage?.lights ?? true) ? <PowerOff className="w-5 h-5" /> : <Zap className="w-5 h-5" />)}
+                                <span className={cn("text-xs font-bold", isFlashing && "text-sm")}>
+                                    {isFlashing ? "ACKNOWLEDGE ALERT" : (!(lobby.sabotage?.lights ?? true) ? "Fix Lights" : "Sabotage Lights")}
+                                </span>
                             </Button>
 
                             {isDiscussion && (
@@ -166,7 +177,7 @@ export function AdminConsole({ lobby, onClose }: AdminConsoleProps) {
                         </div>
                     </div>
                 </div>
-            </motion.div>
-        </div>
-    );
+        </motion.div>
+    </div>
+);
 }
