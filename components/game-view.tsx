@@ -123,9 +123,7 @@ export function GameView({ lobby, me }: GameViewProps) {
                 </div>
             </div>
 
-            import {reportBody, callEmergency, eliminatePlayer, completeTask, triggerSabotage} from "@/lib/game";
 
-            // ... inside GameView render, Actions section ...
 
             {/* Actions */}
             <div className="grid grid-cols-2 gap-4 mt-auto">

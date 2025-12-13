@@ -577,3 +577,18 @@ export async function resetLobby(lobbyId: string) {
 
     await updateDoc(lobbyRef, updates);
 }
+
+export async function triggerSabotage(lobbyId: string) {
+    const lobbyRef = doc(db, "lobbies", lobbyId.toUpperCase());
+    // We merge to keep existing lights state
+    await updateDoc(lobbyRef, {
+        "sabotage.lightsFlash": true
+    });
+}
+
+export async function resolveSabotage(lobbyId: string) {
+    const lobbyRef = doc(db, "lobbies", lobbyId.toUpperCase());
+    await updateDoc(lobbyRef, {
+        "sabotage.lightsFlash": false
+    });
+}
