@@ -4,12 +4,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { GameButton } from "@/components/ui/GameButton";
 import { Input } from "@/components/ui/input";
 import { createLobby, joinLobby, getLobbyPublicInfo, HOST_SKINS, PLAYER_SKINS, ALLOWED_HOSTS } from "@/lib/game";
-import { Loader2, ArrowLeft, Check, Lock, User } from "lucide-react";
+import { Loader2, ArrowLeft, Check, Lock, User, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function JoinGameForm() {
     const router = useRouter();
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const [name, setName] = useState(user?.displayName || "");
     const [code, setCode] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -179,8 +179,18 @@ export function JoinGameForm() {
                     HOST NEW GAME
                 </GameButton>
 
+                <div className="mt-4 flex justify-center">
+                    <button
+                        onClick={() => logout()}
+                        className="text-slate-500 hover:text-slate-300 text-xs uppercase font-bold tracking-widest flex items-center gap-2 transition-colors group"
+                    >
+                        <LogOut className="w-3 h-3 group-hover:-translate-x-1 transition-transform" />
+                        Return to Login
+                    </button>
+                </div>
+
                 {error && (
-                    <p className="text-role-imposter text-sm text-center font-black uppercase tracking-wide animate-pulse">{error}</p>
+                    <p className="text-role-imposter text-sm text-center font-black uppercase tracking-wide animate-pulse mt-2">{error}</p>
                 )}
             </div>
         );
