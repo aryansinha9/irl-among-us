@@ -1,6 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { CheckCircle2, Circle } from "lucide-react";
+import { CheckCircle2, Circle, ChevronDown } from "lucide-react";
 
 interface TaskItemProps {
     description: string;
@@ -42,18 +42,22 @@ export function TaskItem({
                     )}>
                         {description}
                     </span>
-                    {!completed && details && (
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setIsExpanded(!isExpanded);
-                            }}
-                            className="text-xs text-slate-400 text-left hover:text-white mt-1 underline decoration-slate-600 underline-offset-2"
-                        >
-                            {isExpanded ? "Hide details" : "Expand to view details"}
-                        </button>
-                    )}
                 </div>
+
+                {!completed && details && (
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setIsExpanded(!isExpanded);
+                        }}
+                        className="p-1 hover:bg-white/10 rounded-full transition-colors"
+                    >
+                        <ChevronDown className={cn(
+                            "w-5 h-5 text-slate-400 transition-transform duration-200",
+                            isExpanded && "rotate-180"
+                        )} />
+                    </button>
+                )}
             </div>
 
             {/* Expanded Details Panel */}
