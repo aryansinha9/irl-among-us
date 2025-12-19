@@ -1,16 +1,42 @@
 import { Task } from "@/types/game";
 
 export const TASK_TEMPLATES = [
-    { id: "t1", description: "Swipe Card", roomId: "Admin" },
-    { id: "t2", description: "Download Data", roomId: "Cafeteria" },
-    { id: "t3", description: "Fix Wiring", roomId: "Electrical" },
-    { id: "t4", description: "Empty Garbage", roomId: "Storage" },
-    { id: "t5", description: "Fuel Engines", roomId: "Lower Engine" },
-    { id: "t6", description: "Align Engine Output", roomId: "Upper Engine" },
-    { id: "t7", description: "Inspect Sample", roomId: "MedBay" },
-    { id: "t8", description: "Submit Scan", roomId: "MedBay" },
-    { id: "t9", description: "Unlock Manifolds", roomId: "Reactor" },
-    { id: "t10", description: "Start Reactor", roomId: "Reactor" },
+    {
+        id: "t1",
+        description: "Card Swipe",
+        details: "Locate your ID card, proceed to Admin, and correctly enter your ID details on the console.",
+        roomId: "Admin"
+    },
+    {
+        id: "t2",
+        description: "Download Data",
+        details: "Download the data in the starting room and deliver it to the designated location to upload.",
+        roomId: "Admin" // Initial room, could vary logic later
+    },
+    {
+        id: "t3",
+        description: "Stabilise Reactor",
+        details: "Complete the reactor stabilisation puzzle accurately.",
+        roomId: "Reactor"
+    },
+    {
+        id: "t4",
+        description: "Submit Scan",
+        details: "Find your Health Report, enter your ID code, and remain still for 15 seconds while the scan completes.",
+        roomId: "Med Bay"
+    },
+    {
+        id: "t5",
+        description: "Fix Wiring",
+        details: "Match and connect the corresponding coloured wires correctly.",
+        roomId: "Electrical"
+    },
+    {
+        id: "t6",
+        description: "Secure the Ship",
+        details: "Use the navigation map to locate the vault, crack the passcode, retrieve the key, restore power, and gain access to the cockpit.",
+        roomId: "Navigation"
+    },
 ];
 
 export function assignTasks(count: number = 4): Task[] {

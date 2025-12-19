@@ -5,6 +5,7 @@ export type PlayerStatus = 'alive' | 'dead' | 'disconnected';
 export interface Task {
   id: string;
   description: string;
+  details: string; // Brief description of what to do
   roomId: string; // e.g., 'Kitchen', 'Admin'
   completed: boolean;
 }

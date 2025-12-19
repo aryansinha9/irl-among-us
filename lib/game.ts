@@ -337,7 +337,7 @@ export async function completeTask(lobbyId: string, playerId: string, taskIndex:
 
     const newTasks = [...player.tasks];
     if (newTasks[taskIndex]) {
-        newTasks[taskIndex].completed = true;
+        newTasks[taskIndex].completed = !newTasks[taskIndex].completed;
     }
 
     await updateDoc(lobbyRef, {

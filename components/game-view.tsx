@@ -106,14 +106,15 @@ export function GameView({ lobby, me }: GameViewProps) {
                         <TaskItem
                             key={i}
                             description={task.description}
+                            details={task.details}
                             completed={task.completed}
                             onClick={() => {
-                                if (!task.completed && me.status === 'alive' && me.role !== 'imposter') {
+                                if (me.status === 'alive' && me.role !== 'imposter') {
                                     completeTask(lobby.id, me.id, i);
                                 }
                             }}
                             className={cn(
-                                !task.completed && me.status === 'alive' && me.role !== 'imposter' && "cursor-pointer hover:bg-slate-800/80 active:scale-[0.99]"
+                                me.status === 'alive' && me.role !== 'imposter' && "cursor-pointer hover:bg-slate-800/80 active:scale-[0.99]"
                             )}
                         />
                     ))}
