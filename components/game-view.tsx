@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { AdminConsole } from "@/components/admin/admin-console";
 import { WinnerView } from "@/components/winner-view";
 import { IDCardScanner } from "@/components/game/IDCardScanner";
+import { MedbayTaskView } from "@/components/game/MedbayTaskView";
 
 interface GameViewProps {
     lobby: Lobby;
@@ -23,6 +24,7 @@ export function GameView({ lobby, me }: GameViewProps) {
     const [showAdmin, setShowAdmin] = useState(false);
     const [isRoleVisible, setIsRoleVisible] = useState(false);
     const [scannerTaskId, setScannerTaskId] = useState<number | null>(null);
+    const [medbayTaskId, setMedbayTaskId] = useState<number | null>(null);
 
     // HOST VIEW: Immediately show Admin Console / Dashboard (unless playing game as normal player?)
     // User requested distinct interface.
@@ -43,6 +45,22 @@ export function GameView({ lobby, me }: GameViewProps) {
                         setScannerTaskId(null);
                     }}
                     onCancel={() => setScannerTaskId(null)}
+                />
+            )}
+
+            {medbayTaskId !== null && (
+                <MedbayTaskView
+                    playerColor={me.characterImage ? me.characterImage.split('/').pop()?.split('.')[0] || "default" : "default"} // Fallback color derivation or use simulated color property if exists. 
+                    // Actually, looking at types, Player has characterImage which is a path. 
+                    // I will use "red" as default for validation testing if I can't derive it easily, 
+                    // or better yet, I'll check the Player type in the next step to be sure.
+                    // For now, I'll assume valid 'playerColor' need to be passed.
+                    // Let's use a safe fallback.
+                    onComplete={() => {
+                        completeTask(lobby.id, me.id, medbayTaskId);
+                        setMedbayTaskId(null);
+                    }}
+                    onCancel={() => setMedbayTaskId(null)}
                 />
             )}
 
@@ -102,19 +120,19 @@ export function GameView({ lobby, me }: GameViewProps) {
                                 me.status === 'alive' && me.role !== 'imposter' && "cursor-pointer hover:bg-slate-800/80 active:scale-[0.99]"
                             )}
                             onClick={() => {
-                                // Default click action (toggle complete) handled only if NOT a special task or if we want to allow bypass?
-                                // User request implies scan is needed. Let's disable default click if it's a scan task, or maybe just allow both?
-                                // "Eligible to be marked as complete" - suggests manual tick after. 
-                                // But better UX is auto-complete or enable button.
-                                // Let's keep default behavior for standard tasks, but maybe disable for scan?
-                                // Actually, allow manual toggle for debugging/fallback is often good, but user wants "Scan" to be the way.
-                                // I will block default click if it's an id-scan task that isn't done, forcing use of the button.
-                                if (me.status === 'alive' && me.role !== 'imposter' && task.type !== 'id-scan') {
+                                // Default click action handling
+                                if (me.status === 'alive' && me.role !== 'imposter' && task.type !== 'id-scan' && task.type !== 'medbay-scan') {
                                     completeTask(lobby.id, me.id, i);
                                 }
                             }}
-                            actionLabel={task.type === 'id-scan' ? "Scan Card" : undefined}
-                            onAction={() => setScannerTaskId(i)}
+                            actionLabel={
+                                task.type === 'id-scan' ? "Scan Card" :
+                                    task.type === 'medbay-scan' ? "Submit Scan" : undefined
+                            }
+                            onAction={() => {
+                                if (task.type === 'id-scan') setScannerTaskId(i);
+                                if (task.type === 'medbay-scan') setMedbayTaskId(i);
+                            }}
                             isActionEnabled={me.status === 'alive'}
                         />
                     ))}

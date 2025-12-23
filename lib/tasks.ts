@@ -9,6 +9,13 @@ export const TASK_TEMPLATES = [
         type: 'id-scan'
     },
     {
+        id: "t8",
+        description: "Submit Scan",
+        details: "Proceed to Medbay, scan the medical report, and enter the patient data to complete the diagnosis.",
+        roomId: "Medbay",
+        type: 'medbay-scan'
+    },
+    {
         id: "t2",
         description: "Download Data",
         details: "Download the data in the starting room and deliver it to the designated location to upload.",
