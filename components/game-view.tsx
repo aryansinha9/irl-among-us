@@ -52,7 +52,7 @@ export function GameView({ lobby, me }: GameViewProps) {
     }
 
     // HOST VIEW: Show Admin Console / Dashboard if not ended and reveal is done (or skipped)
-    if (me.isHost && lobby.status !== 'ended') {
+    if (me.isHost) {
         return <AdminConsole lobby={lobby} onClose={() => { }} />;
     }
 
