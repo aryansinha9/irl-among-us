@@ -11,6 +11,7 @@ interface RoleRevealProps {
     isOpen: boolean;
     onComplete?: () => void;
     customImage?: React.ReactNode;
+    teammates?: string[];
 }
 
 import Image from "next/image";
@@ -48,7 +49,7 @@ const roleConfig = {
     }
 };
 
-export function RoleReveal({ role, isOpen, onComplete, customImage }: RoleRevealProps) {
+export function RoleReveal({ role, isOpen, onComplete, customImage, teammates = [] }: RoleRevealProps) {
     const config = roleConfig[role];
 
     useEffect(() => {
@@ -123,6 +124,25 @@ export function RoleReveal({ role, isOpen, onComplete, customImage }: RoleReveal
                         >
                             {config.subtitle}
                         </motion.p>
+
+                        {/* Teammates Reveal */}
+                        {role === 'imposter' && teammates.length > 0 && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 2.2 }}
+                                className="mt-8 p-4 bg-red-900/40 border border-red-500/30 rounded-xl backdrop-blur-sm"
+                            >
+                                <p className="text-red-400 text-sm font-bold uppercase tracking-widest mb-2">Fellow Imposters</p>
+                                <div className="flex flex-wrap gap-3 justify-center">
+                                    {teammates.map((mate, i) => (
+                                        <span key={i} className="text-white font-mono text-lg font-bold">
+                                            {mate}
+                                        </span>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        )}
                     </motion.div>
                 </motion.div>
             )}
