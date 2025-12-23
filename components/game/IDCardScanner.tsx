@@ -131,7 +131,7 @@ export function IDCardScanner({ onComplete, onCancel }: IDCardScannerProps) {
                             <motion.div
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
-                                type="spring"
+                                transition={{ type: "spring" }}
                                 className="bg-white rounded-full p-4 shadow-xl"
                             >
                                 <Check className="w-12 h-12 text-green-600" />
