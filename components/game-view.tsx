@@ -46,7 +46,47 @@ export function GameView({ lobby, me }: GameViewProps) {
                 />
             )}
 
-            {/* Header ... */}
+            {/* Header */}
+            <div className="flex justify-between items-center mb-6">
+                <div className="flex flex-col">
+                    <span className="text-xs text-slate-500 font-mono tracking-widest uppercase mb-1">Identity</span>
+                    <div className="flex items-center gap-2">
+                        <span className={cn(
+                            "font-black text-2xl uppercase tracking-wider transition-all",
+                            !isRoleVisible ? "text-slate-600 blur-sm" :
+                                me.role === 'imposter' ? 'text-role-imposter' :
+                                    me.role === 'sheriff' ? 'text-role-sheriff' :
+                                        me.role === 'jester' ? 'text-role-jester' : 'text-role-crewmate'
+                        )}>
+                            {isRoleVisible ? me.role : "HIDDEN"}
+                        </span>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-slate-400 hover:text-white"
+                            onClick={() => setIsRoleVisible(!isRoleVisible)}
+                        >
+                            {isRoleVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </Button>
+                    </div>
+                </div>
+                <div className="flex items-center gap-2">
+                    {me.isHost && (
+                        <GameButton size="icon" variant="ghost" className="text-red-500" onClick={() => setShowAdmin(true)}>
+                            <ShieldAlert className="w-6 h-6" />
+                        </GameButton>
+                    )}
+                    <div className="flex flex-col items-end">
+                        <span className="text-xs text-slate-500 font-mono tracking-widest uppercase">Status</span>
+                        <span className={cn(
+                            "font-bold uppercase tracking-wider",
+                            me.status === 'alive' ? "text-green-500" : "text-red-500"
+                        )}>
+                            {me.status}
+                        </span>
+                    </div>
+                </div>
+            </div>
 
             {/* Task List */}
             <div className="flex-1 overflow-y-auto mb-4 space-y-2">
