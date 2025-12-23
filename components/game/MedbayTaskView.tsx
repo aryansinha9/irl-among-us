@@ -15,34 +15,43 @@ interface MedbayTaskViewProps {
 // Map file names (char_x) to color names used in validation
 // TODO: Update this map to match your specific character assets
 const SKIN_TO_COLOR_MAP: Record<string, string> = {
-    "char_1": "red",
-    "char_2": "blue",
-    "char_3": "green",
-    "char_4": "pink",
-    "char_5": "orange",
-    "char_6": "yellow",
-    "char_7": "black",
-    "char_8": "white",
-    "char_9": "purple",
-    "char_10": "brown",
-    "char_11": "cyan",
-    "char_12": "lime",
-    "char_23": "santa"
+    // Host Skins (char_1-9, 15, 22, 23) but user gave specific mapping for colours.
+    // I will map what the user provided, and map others to default or infer.
+    // User Provided:
+    "char_11": "red",
+    "char_16": "pink",
+    "char_17": "orange",
+    "char_18": "yellow",
+    "char_13": "green",
+    "char_19": "black",
+    "char_12": "blue",
+    "char_20": "grey",
+    "char_14": "santa",
+    "char_21": "purple",
+    // Fallback for others if they are used as colors:
+    // (We should probably have covered all PLAYER skins except 10)
+    // PLAYER SKINS: 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, 23
+    // User missed char_10 -> 'brown'? char_23 -> 'santa' was moved to player so maybe char_23 is old santa?
+    // Wait, user said "Santa (char_14)". In previous turns I moved char_23 to player as Santa.
+    // Now user says char_14 is Santa. I should trust this new mapping.
+    // char_10? Let's just map it to 'brown' or 'default'.
+    "char_10": "brown"
 };
 
 const VALIDATION_DATA: Record<string, { heartRate: string, crewId: string }> = {
     "default": { heartRate: "80", crewId: "1234" },
-    "red": { crewId: "49276", heartRate: "72" },
-    "pink": { crewId: "95271", heartRate: "75" },
-    "orange": { crewId: "30586", heartRate: "70" },
-    "yellow": { crewId: "29863", heartRate: "80" },
-    "green": { crewId: "57692", heartRate: "74" },
-    "black": { crewId: "70519", heartRate: "62" },
-    "blue": { crewId: "18435", heartRate: "68" },
-    "grey": { crewId: "62957", heartRate: "65" }, // White/Grey
-    "white": { crewId: "62957", heartRate: "65" }, // Alias
-    "santa": { crewId: "62957", heartRate: "78" }, // Same ID as Grey? User provided #62957-SANTA. Yes number matches.
-    "purple": { crewId: "11148", heartRate: "66" }
+    "red": { crewId: "49276-RED", heartRate: "72" },
+    "pink": { crewId: "95271-PINK", heartRate: "75" },
+    "orange": { crewId: "30586-ORANGE", heartRate: "70" },
+    "yellow": { crewId: "29863-YELLOW", heartRate: "80" },
+    "green": { crewId: "57692-GREEN", heartRate: "74" },
+    "black": { crewId: "70519-BLACK", heartRate: "62" },
+    "blue": { crewId: "18435-BLUE", heartRate: "68" },
+    "grey": { crewId: "62957-GREY", heartRate: "65" },
+    // "white": { crewId: "62957-GREY", heartRate: "65" }, // Removed alias if not needed, Grey covers it
+    "santa": { crewId: "62957-SANTA", heartRate: "78" },
+    "purple": { crewId: "11148-PURPLE", heartRate: "66" },
+    "brown": { crewId: "00000-BROWN", heartRate: "70" } // Fallback for char_10
 };
 
 export function MedbayTaskView({ onComplete, onCancel, playerColor }: MedbayTaskViewProps) {
@@ -122,14 +131,14 @@ export function MedbayTaskView({ onComplete, onCancel, playerColor }: MedbayTask
                                     <Label htmlFor="crewId" className="text-slate-300">Crew ID</Label>
                                     <Input
                                         id="crewId"
-                                        type="number"
-                                        placeholder="e.g. 1234"
+                                        type="text"
+                                        placeholder="e.g. 12345-COLOR"
                                         value={crewId}
                                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                            setCrewId(e.target.value);
+                                            setCrewId(e.target.value.toUpperCase()); // Auto upcase
                                             setError(null);
                                         }}
-                                        className="bg-slate-950 border-slate-700 text-white placeholder:text-slate-600 font-mono text-lg"
+                                        className="bg-slate-950 border-slate-700 text-white placeholder:text-slate-600 font-mono text-lg uppercase"
                                     />
                                 </div>
                             </div>
