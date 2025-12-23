@@ -26,13 +26,35 @@ export function GameView({ lobby, me }: GameViewProps) {
     const [scannerTaskId, setScannerTaskId] = useState<number | null>(null);
     const [medbayTaskId, setMedbayTaskId] = useState<number | null>(null);
 
-    // HOST VIEW: Immediately show Admin Console / Dashboard (unless playing game as normal player?)
-    // User requested distinct interface.
+
+
+    if (lobby.status === 'ended') {
+        return <WinnerView lobby={lobby} me={me} />;
+    }
+
+    // PLAYER VIEW: Logic for Reveal, then Game
+    if (showReveal && me.role !== 'spectator') {
+        const teammates = me.role === 'imposter'
+            ? Object.values(lobby.players)
+                .filter(p => p.role === 'imposter' && p.id !== me.id)
+                .map(p => ({
+                    name: p.name,
+                    characterImage: p.characterImage || "" // Guard against missing image
+                }))
+            : [];
+
+        return <RoleReveal
+            role={me.role as "crewmate" | "imposter" | "jester" | "sheriff"}
+            isOpen={showReveal}
+            onComplete={() => setShowReveal(false)}
+            teammates={teammates}
+        />;
+    }
+
+    // HOST VIEW: Show Admin Console / Dashboard if not ended and reveal is done (or skipped)
     if (me.isHost && lobby.status !== 'ended') {
         return <AdminConsole lobby={lobby} onClose={() => { }} />;
     }
-
-    // ... existing code ...
 
     return (
         <div className="flex flex-col h-screen bg-space-black text-white p-4">
