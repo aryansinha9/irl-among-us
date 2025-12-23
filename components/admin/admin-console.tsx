@@ -19,9 +19,20 @@ interface AdminConsoleProps {
 export function AdminConsole({ lobby, onClose }: AdminConsoleProps) {
     const players = Object.values(lobby.players);
 
-    // Calculate total progress (just count completed tasks vs total tasks)
-    const totalTasks = players.reduce((acc, p) => acc + (p.tasks?.length || 0), 0);
-    const completedTasks = players.reduce((acc, p) => acc + (p.tasks?.filter(t => t.completed).length || 0), 0);
+    // Calculate total progress (filtered for Crewmates only)
+    const crewmates = players.filter(p => p.role !== 'imposter' && p.role !== 'spectator' && p.role !== 'jester' && p.role !== 'sheriff');
+    // Wait, sheriff counts as crew for tasks? Usually yes. Jester no.
+    // Let's stick to standard Crewmate/Sheriff for tasks.
+    // Actually, simpler: filter OUT Imposter and Spectator and Jester.
+
+    const taskCompleters = players.filter(p =>
+        p.role !== 'imposter' &&
+        p.role !== 'spectator' &&
+        p.role !== 'jester'
+    );
+
+    const totalTasks = taskCompleters.reduce((acc, p) => acc + (p.tasks?.length || 0), 0);
+    const completedTasks = taskCompleters.reduce((acc, p) => acc + (p.tasks?.filter(t => t.completed).length || 0), 0);
     const progressPercent = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
     const handleResetGame = async () => {
