@@ -27,13 +27,7 @@ export const TASK_TEMPLATES = [
         details: "Complete the reactor stabilisation puzzle accurately.",
         roomId: "Reactor"
     },
-    {
-        id: "t4",
-        description: "Submit Scan",
-        details: "Find your Health Report, enter your ID code, and remain still for 15 seconds while the scan completes.",
-        roomId: "Med Bay",
-        type: 'medbay-scan'
-    },
+
     {
         id: "t5",
         description: "Fix Wiring",
