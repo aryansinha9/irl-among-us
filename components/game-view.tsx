@@ -42,7 +42,10 @@ export function GameView({ lobby, me }: GameViewProps) {
         const teammates = me.role === 'imposter'
             ? Object.values(lobby.players)
                 .filter(p => p.role === 'imposter' && p.id !== me.id)
-                .map(p => p.name)
+                .map(p => ({
+                    name: p.name,
+                    characterImage: p.characterImage || "" // Guard against missing image
+                }))
             : [];
 
         return <RoleReveal

@@ -11,7 +11,7 @@ interface RoleRevealProps {
     isOpen: boolean;
     onComplete?: () => void;
     customImage?: React.ReactNode;
-    teammates?: string[];
+    teammates?: { name: string; characterImage: string }[];
 }
 
 import Image from "next/image";
@@ -134,11 +134,23 @@ export function RoleReveal({ role, isOpen, onComplete, customImage, teammates = 
                                 className="mt-8 p-4 bg-red-900/40 border border-red-500/30 rounded-xl backdrop-blur-sm"
                             >
                                 <p className="text-red-400 text-sm font-bold uppercase tracking-widest mb-2">Fellow Imposters</p>
-                                <div className="flex flex-wrap gap-3 justify-center">
+                                <div className="flex flex-wrap gap-6 justify-center">
                                     {teammates.map((mate, i) => (
-                                        <span key={i} className="text-white font-mono text-lg font-bold">
-                                            {mate}
-                                        </span>
+                                        <div key={i} className="flex flex-col items-center gap-1">
+                                            {mate.characterImage && (
+                                                <div className="relative w-12 h-12">
+                                                    <Image
+                                                        src={mate.characterImage}
+                                                        alt={mate.name}
+                                                        fill
+                                                        className="object-contain drop-shadow-md"
+                                                    />
+                                                </div>
+                                            )}
+                                            <span className="text-white font-mono text-lg font-bold">
+                                                {mate.name}
+                                            </span>
+                                        </div>
                                     ))}
                                 </div>
                             </motion.div>
