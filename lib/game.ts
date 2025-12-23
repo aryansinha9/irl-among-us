@@ -34,12 +34,12 @@ const COSMETIC_COLORS = [
 // Defined Skin Pools
 export const HOST_SKINS = [
     "char_1", "char_2", "char_3", "char_4", "char_5", "char_6", "char_7", "char_8",
-    "char_14", "char_15", "char_20", "char_22", "char_23"
+    "char_9", "char_15", "char_22", "char_23"
 ];
 
 export const PLAYER_SKINS = [
-    "char_9", "char_10", "char_11", "char_12", "char_13",
-    "char_16", "char_17", "char_18", "char_19", "char_21"
+    "char_10", "char_11", "char_12", "char_13", "char_14",
+    "char_16", "char_17", "char_18", "char_19", "char_20", "char_21"
 ];
 
 export const ALLOWED_HOSTS = [

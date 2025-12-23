@@ -12,12 +12,37 @@ interface MedbayTaskViewProps {
     playerColor: string;
 }
 
-// TODO: Replace with actual user-provided mapping
+// Map file names (char_x) to color names used in validation
+// TODO: Update this map to match your specific character assets
+const SKIN_TO_COLOR_MAP: Record<string, string> = {
+    "char_1": "red",
+    "char_2": "blue",
+    "char_3": "green",
+    "char_4": "pink",
+    "char_5": "orange",
+    "char_6": "yellow",
+    "char_7": "black",
+    "char_8": "white",
+    "char_9": "purple",
+    "char_10": "brown",
+    "char_11": "cyan",
+    "char_12": "lime",
+    "char_23": "santa"
+};
+
 const VALIDATION_DATA: Record<string, { heartRate: string, crewId: string }> = {
-    // Default fallback if color not found or for testing
     "default": { heartRate: "80", crewId: "1234" },
-    "red": { heartRate: "80", crewId: "1234" },
-    "blue": { heartRate: "75", crewId: "5678" }
+    "red": { crewId: "49276", heartRate: "72" },
+    "pink": { crewId: "95271", heartRate: "75" },
+    "orange": { crewId: "30586", heartRate: "70" },
+    "yellow": { crewId: "29863", heartRate: "80" },
+    "green": { crewId: "57692", heartRate: "74" },
+    "black": { crewId: "70519", heartRate: "62" },
+    "blue": { crewId: "18435", heartRate: "68" },
+    "grey": { crewId: "62957", heartRate: "65" }, // White/Grey
+    "white": { crewId: "62957", heartRate: "65" }, // Alias
+    "santa": { crewId: "62957", heartRate: "78" }, // Same ID as Grey? User provided #62957-SANTA. Yes number matches.
+    "purple": { crewId: "11148", heartRate: "66" }
 };
 
 export function MedbayTaskView({ onComplete, onCancel, playerColor }: MedbayTaskViewProps) {
@@ -31,14 +56,17 @@ export function MedbayTaskView({ onComplete, onCancel, playerColor }: MedbayTask
     };
 
     const validateAndSubmit = () => {
-        const normalizedColor = playerColor.toLowerCase();
-        const targetData = VALIDATION_DATA[normalizedColor] || VALIDATION_DATA["default"];
+        const rawColor = playerColor.toLowerCase();
+        // Try mapped color, then raw color (e.g. if 'red' is passed directly)
+        const colorKey = SKIN_TO_COLOR_MAP[rawColor] || rawColor;
+        const targetData = VALIDATION_DATA[colorKey] || VALIDATION_DATA["default"];
 
+        // Check if input matches
         if (heartRate.trim() === targetData.heartRate && crewId.trim() === targetData.crewId) {
             setStep("success");
             setTimeout(onComplete, 1500);
         } else {
-            setError("Incorrect data. Please check crew records.");
+            setError(`Invalid Data. Expected ID ending in: ...${targetData.crewId}`);
         }
     };
 
