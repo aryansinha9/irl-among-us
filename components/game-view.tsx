@@ -24,6 +24,12 @@ export function GameView({ lobby, me }: GameViewProps) {
     const [isRoleVisible, setIsRoleVisible] = useState(false);
     const [scannerTaskId, setScannerTaskId] = useState<number | null>(null);
 
+    // HOST VIEW: Immediately show Admin Console / Dashboard (unless playing game as normal player?)
+    // User requested distinct interface.
+    if (me.isHost && lobby.status !== 'ended') {
+        return <AdminConsole lobby={lobby} onClose={() => { }} />;
+    }
+
     // ... existing code ...
 
     return (

@@ -19,16 +19,17 @@ export function IDCardScanner({ onComplete, onCancel }: IDCardScannerProps) {
     const [capturedImage, setCapturedImage] = useState<string | null>(null);
     const [isComplete, setIsComplete] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [facingMode, setFacingMode] = useState<"user" | "environment">("environment");
 
     useEffect(() => {
         startCamera();
         return () => stopCamera();
-    }, []);
+    }, [facingMode]);
 
     const startCamera = async () => {
         try {
             const mediaStream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: "user" }
+                video: { facingMode: facingMode }
             });
             setStream(mediaStream);
             if (videoRef.current) {
@@ -105,7 +106,15 @@ export function IDCardScanner({ onComplete, onCancel }: IDCardScannerProps) {
 
                     {/* Header */}
                     <div className="flex justify-between items-start pointer-events-auto">
-                        <h2 className="text-white font-bold tracking-wider drop-shadow-md">SCAN ID CARD</h2>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setFacingMode(prev => prev === "user" ? "environment" : "user")}
+                            className="text-white hover:bg-white/20"
+                        >
+                            <Camera className="w-6 h-6" />
+                        </Button>
+                        <h2 className="text-white font-bold tracking-wider drop-shadow-md mt-2">SCAN ID CARD</h2>
                         <Button variant="ghost" size="icon" onClick={onCancel} className="text-white hover:bg-white/20">
                             <X className="w-6 h-6" />
                         </Button>
