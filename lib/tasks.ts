@@ -5,13 +5,14 @@ export const TASK_TEMPLATES = [
         id: "t1",
         description: "Card Swipe",
         details: "Locate your ID card, proceed to Admin, and correctly enter your ID details on the console.",
-        roomId: "Admin"
+        roomId: "Admin",
+        type: 'id-scan'
     },
     {
         id: "t2",
         description: "Download Data",
         details: "Download the data in the starting room and deliver it to the designated location to upload.",
-        roomId: "Admin" // Initial room, could vary logic later
+        roomId: "Admin"
     },
     {
         id: "t3",
@@ -23,7 +24,8 @@ export const TASK_TEMPLATES = [
         id: "t4",
         description: "Submit Scan",
         details: "Find your Health Report, enter your ID code, and remain still for 15 seconds while the scan completes.",
-        roomId: "Med Bay"
+        roomId: "Med Bay",
+        type: 'medbay-scan'
     },
     {
         id: "t5",
@@ -42,8 +44,13 @@ export const TASK_TEMPLATES = [
 export function assignTasks(count: number = 4): Task[] {
     // Randomly select tasks
     const shuffled = [...TASK_TEMPLATES].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, count).map(t => ({
-        ...t,
-        completed: false
-    }));
+    return shuffled.slice(0, count).map(t => {
+        const task: Task = {
+            ...t,
+            // Ensure we don't pass undefined 'type' to Firestore
+            ...((t as any).type ? { type: (t as any).type } : {}),
+            completed: false
+        };
+        return task;
+    });
 }

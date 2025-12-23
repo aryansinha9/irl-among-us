@@ -7,6 +7,7 @@ export interface Task {
   description: string;
   details: string; // Brief description of what to do
   roomId: string; // e.g., 'Kitchen', 'Admin'
+  type?: 'standard' | 'id-scan' | 'medbay-scan';
   completed: boolean;
 }
 
