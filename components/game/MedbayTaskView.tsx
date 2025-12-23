@@ -66,7 +66,7 @@ export function MedbayTaskView({ onComplete, onCancel, playerColor }: MedbayTask
             setStep("success");
             setTimeout(onComplete, 1500);
         } else {
-            setError(`Invalid Data. Expected ID ending in: ...${targetData.crewId}`);
+            setError("Invalid data.");
         }
     };
 
