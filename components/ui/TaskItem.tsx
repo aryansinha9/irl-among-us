@@ -6,8 +6,11 @@ interface TaskItemProps {
     description: string;
     details?: string;
     completed: boolean;
-    className?: string;
+    className?: string; // Restored
     onClick?: () => void;
+    actionLabel?: string;
+    onAction?: () => void;
+    isActionEnabled?: boolean;
 }
 
 export function TaskItem({
@@ -15,9 +18,19 @@ export function TaskItem({
     details,
     completed,
     className,
-    onClick
+    onClick,
+    actionLabel,
+    onAction,
+    isActionEnabled = true
 }: TaskItemProps) {
     const [isExpanded, setIsExpanded] = React.useState(false);
+
+    const handleAction = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (isActionEnabled && onAction) {
+            onAction();
+        }
+    };
 
     return (
         <div className="flex flex-col w-full">
@@ -61,11 +74,21 @@ export function TaskItem({
             </div>
 
             {/* Expanded Details Panel */}
-            {isExpanded && !completed && details && (
-                <div className="ml-4 mr-4 p-3 bg-slate-900/80 border-l-2 border-slate-700 text-slate-300 text-sm animate-in slide-in-from-top-2">
-                    {details}
-                </div>
-            )}
+            <div className="ml-4 mr-4 p-3 bg-slate-900/80 border-l-2 border-slate-700 text-slate-300 text-sm animate-in slide-in-from-top-2 flex flex-col gap-3">
+                <p>{details}</p>
+                {actionLabel && !completed && (
+                    <button
+                        onClick={handleAction}
+                        disabled={!isActionEnabled}
+                        className={cn(
+                            "self-start px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white font-bold uppercase tracking-wider text-xs transition-colors",
+                            !isActionEnabled && "opacity-50 cursor-not-allowed bg-slate-700"
+                        )}
+                    >
+                        {actionLabel}
+                    </button>
+                )}
+            </div>
         </div>
     );
 }
