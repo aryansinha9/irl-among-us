@@ -39,7 +39,18 @@ export function GameView({ lobby, me }: GameViewProps) {
 
     // PLAYER VIEW: Logic for Reveal, then Game
     if (showReveal && me.role !== 'spectator') {
-        return <RoleReveal role={me.role as "crewmate" | "imposter" | "jester" | "sheriff"} isOpen={showReveal} onComplete={() => setShowReveal(false)} />;
+        const teammates = me.role === 'imposter'
+            ? Object.values(lobby.players)
+                .filter(p => p.role === 'imposter' && p.id !== me.id)
+                .map(p => p.name)
+            : [];
+
+        return <RoleReveal
+            role={me.role as "crewmate" | "imposter" | "jester" | "sheriff"}
+            isOpen={showReveal}
+            onComplete={() => setShowReveal(false)}
+            teammates={teammates}
+        />;
     }
 
     return (
